@@ -10,6 +10,7 @@ function test(req, res) {
     res.status(200).send({ message: 'hola q tal!' });
 
 }
+//*************************SAVE MESAGES */
 function saveMessage(req, res) {
     var params = req.body;
     if (!params.text || !params.receiver)
