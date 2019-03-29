@@ -1,2 +1,2 @@
-# SOCIAL_NET
+# SOCIAL_NET/BACKEND
 # Technologies used
