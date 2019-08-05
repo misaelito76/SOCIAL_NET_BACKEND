@@ -19,7 +19,9 @@ function test(req, res) {
 //********************Method to save a publication**************** */
 function savePublication(req, res) {
     var params = req.body; //*what we get from post requests
+    if(!params.text) return res.status(200).send({message:'send a text!!!'})
     var publication = new Publication();
+
     publication.text = params.text;
     publication.file = 'null';
     publication.user = req.user.sub;
@@ -55,6 +57,7 @@ function getPublications(req, res) {
         follows.forEach((follow) => {
             follows_clean.push(follow.followed)
         });
+        console.log(follows_clean)
         //*the operator "$in" search all document which users is contained in a publication inside the array follows_clean  
         Publication.find({ 'user': { "$in": follows_clean } }).sort('-created_at').populate('user')
             .paginate(page, itemsPerPage, (err, publications, total) => {

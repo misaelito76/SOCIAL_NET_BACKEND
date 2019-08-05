@@ -28,22 +28,34 @@ function saveUser(req, res) {
     var params = req.body;
     var user = new User();
     if (params.name && params.surname &&
-        params.nick && params.email &&
-        params.password) {
+		params.email &&
+	  params.password) {
 
-        user.name = params.name;
-        user.surname = params.surname;
-        user.nick = params.nick;
-        user.email = params.email;
-        user.role = 'ROLE_USER';
-        user.image = null;
+	  user.name = params.name;
+	  user.surname = params.surname;
+	  user.petName = params.petName;
+	  user.email = params.email;
+	  user.age = params.age;
+	  user.animal = params.animal;
+	  user.race = params.race;
+	  user.sex = params.sex;
+	  user.allergies = params.allergies;
+	  user.meals = params.meals;
+	  user.vaccination = params.vaccination;
+	  user.licensing = params.licensing;
+	  user.status = params.status;
+	  user.comments = params.comments;
+	  user.address = params.address;
+	  user.mobile = params.mobile
+	  user.role = 'ROLE_USER';
+	  user.image = null;
         //*control duplicated users
         User.find({
             $or: [{
                     email: user.email
                 },
                 {
-                    nick: user.nick
+                   surname: user.surname
                 },
 
             ]
@@ -107,7 +119,7 @@ function loginUser(req, res) {
             bcrypt.compare(password, user.password, (err, check) => {
                 if (check) {
 
-                    if (params.getToken) {
+                    if (params.gettoken) {
                         return res.status(200).send({
                             token: jwt.createToken(user) //*calling jwt service with 
                             //*the method createtoken we then pass the "user"
@@ -185,7 +197,7 @@ function getUsers(req, res) {
         page = req.params.page;
 
     }
-    var itemsPerPage = 4;
+    var itemsPerPage = 14;
     User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
         if (err) return res.status(500).send({
             message: 'request error'
@@ -262,19 +274,19 @@ function getCounters(req, res) {
   }  
 
 async function getCountFollow(userId) {
-    var following = await Follow.count({ "user": userId }).exec().then((count) => {
+    var following = await Follow.countDocuments({ "user": userId }).exec().then((count) => {
         
         return count
     }).catch((err) => {
         return handleError(err)
     })
-    var followed = await Follow.count({ "followed": userId }).exec().then((count) => {
+    var followed = await Follow.countDocuments({ "followed": userId }).exec().then((count) => {
     
         return count
     }).catch((err) => {
         return handleError(err)
     });
-    var publications = await Publication.count({ "user": userId }).exec().then((count) => {
+    var publications = await Publication.countDocuments({ "user": userId }).exec().then((count) => {
     
         return count
     }).catch((err) => {
