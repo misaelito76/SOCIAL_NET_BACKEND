@@ -75,18 +75,21 @@ function getPublications(req, res){
     });
 }
 function getPublication(req, res) {
-          var publicationId = req.params.id          
-    Publication.findById(publicationId, (err, publication) => {
+    var publicationId = req.params.id   
+    Publication.find({ 'user': req.user.sub,'_id':publicationId }, (err, publication) => {
+        
         if (err) return res.status(500).send({
             message: 'error giving baack the publication'
         }); 
         if (!publication) return res.status(404).send({
             message: 'there is no publication'
         });
-        return res.status(200).send({publication})
+      
+    
 
     })
 };
+
 function deletePublication(req, res) {
     var publicationId = req.params.id          
     Publication.find({ 'user': req.user.sub,'_id':publicationId }).remove ((err, publicationRemoved) => {
@@ -193,6 +196,84 @@ function getImageFile(req, res) {
         }
     })
 }
+async function likePublicationIds(publication_id){
+    try{
+        var liking = await Like.find({"publication":publication_id}).select({'_id':0, '__v':0, 'publication':0}).exec() 
+            .then((likes) => {
+                return likes;
+            })
+            .catch((err) => {
+                return handleError(err);
+        });
+    
+      var liked = await Like.find({"liked":publication_id}).select({'_id':0, '__v':0, 'liked':0}).exec()
+          .then((likes) => {
+              return likes;
+          })
+          .catch((err) => {
+              return handleError(err);
+      });
+                
+            //Procesar following Ids
+                var liking_clean = [];
+          
+                liking.forEach((like) => {
+                  liking_clean.push(like.liked);
+                });
+     
+                //Procesar followed Ids
+                var liked_clean = [];
+            
+                liked.forEach((like) => {
+                  liked_clean.push(like.publication);
+                });
+                
+          
+            return {
+                     liking: liking_clean,
+                     liked: liked_clean
+                   }
+          
+          } catch(e){
+          console.log(e);
+          }
+};
+function getCounters(req, res) {
+    var publicationId = req.publication.sub;
+    
+    if (req.params.id) {
+        publicationId = req.params.id;
+    }
+        getCountLike(req.params.id).then((value) => {
+            return res.status(200).send(value);
+      })
+  }  
+
+async function getCountLike(publicationId) {
+    var liking = await Like.countDocuments({ "publication": publicationId }).exec().then((count) => {
+        
+        return count
+    }).catch((err) => {
+        return handleError(err)
+    })
+    var liked = await Like.countDocuments({ "liked": publicationId }).exec().then((count) => {
+    
+        return count
+    }).catch((err) => {
+        return handleError(err)
+    });
+    var publications = await Publication.countDocuments({ "user": userId }).exec().then((count) => {
+    
+        return count
+    }).catch((err) => {
+        return handleError(err)
+    });
+    return {
+        liking: liking,
+        liked: liked,
+        publications:publications
+    }
+}
 
 
 module.exports = {
@@ -202,5 +283,8 @@ module.exports = {
     getPublication,
     deletePublication,
     uploadImage,
-    getImageFile
+    getImageFile,
+    getCounters,
+    getCountLike,
+    likePublicationIds
 }

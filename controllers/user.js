@@ -9,7 +9,7 @@ var fs = require('fs');
 var path = require('path');
 
 function home(req, res) {
-    console.log(req.body)
+    //console.log(req.body)
     res.status(200).send({
         message: 'Hello world home'
 
@@ -176,7 +176,7 @@ async function followThisUser(identity_user_id, user_id) {
     });
  
     var followed = await Follow.findOne({ "user": user_id, "followed": identity_user_id }).exec().then((follow) => {
-        console.log(follow);
+        //console.log(follow);
         return follow;
     }).catch((err) => {
         return handleError(err);
@@ -384,7 +384,7 @@ function removeFilesOfUploads(res, file_path, message) {
 function getImageFile(req, res) {
     var image_file = req.params.imageFile;
     var path_file = './uploads/users/' + image_file;
-    console.log(image_file)
+   // console.log(image_file)
 
     fs.exists(path_file, (exists) => {
         if (exists) {

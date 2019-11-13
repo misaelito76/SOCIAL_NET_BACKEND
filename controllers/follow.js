@@ -8,6 +8,8 @@ var fs = require('fs');
 var path = require('path');
 function saveFollow(req, res) {
     var params = req.body;
+        console.log(params)
+
     var follow = new Follow();
     follow.user = req.user.sub; //*follow.user save the value of the authenticated user
     follow.followed = params.followed;

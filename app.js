@@ -7,6 +7,8 @@ var app = express();
 //load routes
 var user_routes = require('./routes/user');
 var follow_routes = require('./routes/follow'); 
+var like_routes = require('./routes/like'); 
+
 var publication_routes = require('./routes/publication'); 
 var messages_routes = require('./routes/message'); 
 
@@ -28,6 +30,8 @@ app.use((req, res, next) => {
 //routes
 app.use('/api', user_routes);
 app.use('/api', follow_routes);
+app.use('/api', like_routes);
+
 app.use('/api', publication_routes);
 app.use('/api', messages_routes);
 
